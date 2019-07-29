@@ -1,0 +1,20 @@
+{
+  "name": "gabi-bot",
+  "version": "1.0.0",
+  "description": "Hello fellow humans! I am a human, my name is Gabi!",
+  "main": "bot.js",
+  "author": "Dave",
+  "dependencies": {
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+    "discord.js": "^11.5.1",
+    "ffmpeg": "0.0.4",
+    "ffmpeg-binaries": "^4.0.0",
+    "fuzzyset.js": "0.0.8",
+    "opusscript": "0.0.6",
+    "winston": "^3.2.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "ISC"
+}
