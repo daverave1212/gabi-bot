@@ -116,11 +116,16 @@ bot.on('message', message => {
 			console.log(args)
 			switch(command){
 				case "add":
-					gabiQuotes.addReply(args[1], args[2])
-					message.channel.send("De acum in colo, o sa raspund cu '" + args[2] + "' la '" + args[1] + "'")
+					console.log(gabiQuotes.getReplyFromExactMessage(args[1]))
+					if(gabiQuotes.getReplyFromExactMessage(args[1]) == null){
+						gabiQuotes.addReply(args[1], args[2])
+						message.channel.send("de acum in colo, o sa raspund cu '" + args[2] + "' la '" + args[1] + "'")
+					} else {
+						message.channel.send("iei muie, deja raspund cu '" + gabiQuotes.getReplyFromExactMessage(args[1]) + "' la asta")
+					}				
 					break
 				case "remove":
-					message.channel.send("Apai da vezi tu, asta nu stiu sa fac")
+					message.channel.send("apai da vezi tu, asta nu stiu sa fac")
 					break
 				case "save":
 					gabiQuotes.save(currentChannel)
