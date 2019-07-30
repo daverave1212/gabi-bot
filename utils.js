@@ -1,3 +1,6 @@
+const https = require('https')
+var parseXML = require('xml2js').parseString
+
 
 function getFirstNull(arr){
 	for(let i = 0; i<arr.length; i++){
@@ -133,6 +136,32 @@ function splitArguments(string){
 	return ret
 }
 
+
+function doGet(url, callback){
+	https.get(url, (resp) => {
+		let data = ''
+		resp.on('data', (chunk) => {
+			data += chunk;
+		});
+		resp.on('end', () => {
+			callback(data)
+		})
+	}).on("error", (err) => {
+		console.log("Error: " + err.message);
+	});
+}
+
+function replaceAll(str, word, replacer){
+	var strings = str.split(word);
+	var ret = strings[0];
+	for(var i = 1; i<strings.length; i++){
+		ret += replacer + strings[i];
+	}
+	return ret;
+}
+
+
+
 module.exports.findInArray = findInArray
 module.exports.randomOf = randomOf
 module.exports.randomOfArray = randomOfArray
@@ -145,6 +174,8 @@ module.exports.printKeys = printKeys
 module.exports.startTheSame = startTheSame
 module.exports.substringFrom = substringFrom
 module.exports.splitArguments = splitArguments
+module.exports.replaceAll = replaceAll
+module.exports.doGet = doGet
 
 
 

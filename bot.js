@@ -4,6 +4,8 @@ var u			= require('./utils.js')
 var fs			= require('fs')
 var FuzzySet	= require('fuzzyset.js')
 var gabiQuotes	= require('./gabiQuotes.js')
+
+
 // message.reply('hopa')
 // message.channel.send("nuj")
 
@@ -53,9 +55,6 @@ function leaveVoiceChannel(message, callback){
 	}
 }
 
-function sayJoke(message, callback){
-
-}
 function playSound(filePath){
 	var dispatcher = currentConnection.playFile(filePath)
 }
@@ -78,12 +77,24 @@ function startSendingMOTD(){
 		}
 	}, 10000)
 }
+function startSendingIntendedQuotes(){
+	setInterval(()=>{
+		if(currentChannel != null){
+			gabiQuotes.getIntendedQuote((quote)=>{
+				if(quote != null){
+					currentChannel.send(quote)
+				}
+			})
+		}
+	}, 10000)
+}
 
 bot.on('ready', () => {
 	console.log("GabiBot started")
 	currentChannel = bot.channels.get(SpamChannel)
 	gabiQuotes.load(specialSentences, ()=>{
 		startSendingMOTD()
+		startSendingIntendedQuotes()
 	})
 })
 
