@@ -77,8 +77,10 @@ function startSendingMOTD(){
 		setInterval(()=>{
 			timeSinceLastInteraction += 500
 			if(timeSinceLastInteraction >= OneMinute){
-				currentChannel.send(gabiQuotes.getRandomMOTD())
-				timeSinceLastInteraction = 0
+				if(currentChannel != null){
+					currentChannel.send(gabiQuotes.getRandomMOTD())
+					timeSinceLastInteraction = 0
+				}
 			}
 		}, 500)
 	}, 5000)
