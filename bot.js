@@ -11,11 +11,15 @@ var gabiQuotes	= require('./gabiQuotes.js')
 
 const Name = "Gabi"
 const SpamChannel = "411992175094530049"
+const OneMinute = 1000 * 60
+const TenMinutes = 1000 * 60 * 10
 
 var bot = new Discord.Client()
 var currentVoiceChannel = null
 var currentConnection = null
 var currentChannel = null
+
+var timeSinceLastInteraction = 0	// Miliseconds
 
 var specialSentences = [
 	"zi o gluma",
@@ -65,18 +69,35 @@ function analyzeSentence(message){
 	}
 }
 
-var alreadySentSomething = false
 function startSendingMOTD(){
-	setInterval(()=>{
-		if(currentChannel != null && !alreadySentSomething){
+	setTimeout(()=>{
+		if(currentChannel != null){
 			currentChannel.send(gabiQuotes.getRandomMOTD())
-			alreadySentSomething = true
 		}
-		if(u.randomInt(0, 25) == 99){
-			alreadySentSomething = false
-		}
-	}, 10000)
+		setInterval(()=>{
+			timeSinceLastInteraction += 500
+			if(timeSinceLastInteraction >= OneMinute){
+				currentChannel.send(gabiQuotes.getRandomMOTD())
+				timeSinceLastInteraction = 0
+			}
+		}, 500)
+	}, 5000)
 }
+
+function playRandomGame(){
+	let game = gabiQuotes.getRandomGame()
+	console.log('Acu ma joc ')
+	console.log(game)
+	bot.user.setActivity(game)
+}
+
+function startPlayingGames(){
+	playRandomGame()
+	setInterval(()=>{
+		playRandomGame()
+	}, TenMinutes)
+}
+
 function startSendingIntendedQuotes(){
 	setInterval(()=>{
 		if(currentChannel != null){
@@ -86,7 +107,7 @@ function startSendingIntendedQuotes(){
 				}
 			})
 		}
-	}, 10000)
+	}, 5000)
 }
 
 bot.on('ready', () => {
@@ -95,6 +116,7 @@ bot.on('ready', () => {
 	gabiQuotes.load(specialSentences, ()=>{
 		startSendingMOTD()
 		startSendingIntendedQuotes()
+		startPlayingGames()
 	})
 })
 
@@ -138,6 +160,10 @@ bot.on('message', message => {
 					break
 				case "--channel":
 					console.log(currentChannel)
+					break
+				case "game":
+					gabiQuotes.addGame(args[1])
+					message.channel.send(`${args[1]} e un joc bun`)
 					
 			}
 		}

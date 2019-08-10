@@ -29,23 +29,27 @@ var quotesList = []
 var quotesMap  = {}
 var quotesFuzzySet = null
 var quotesMOTD = []
+var gamesAvailable = []
 
 function load(specialSentences, callback){
 	database.connectToDatabase(()=>{
-		database.getAllQuotes((ql, qm)=>{
-			quotesList = ql
-			quotesMap = qm
-			console.log("Loaded quotes from database successfully.")
-			File.readFile('./Quotes/quotesMOTD.json', 'utf8', (err, content)=>{
-				quotesMOTD = JSON.parse(content)
-				//console.log(quotesMOTD)
-				console.log("Read motd.")
-				console.log("Building fuzz...")
-				quotesFuzzySet = FuzzySet(quotesList.concat(specialSentences))
-				console.log("Gabi bot is ready!")
-				if(callback != null){
-					callback()
-				}
+		database.getAllGames((games)=>{
+			gamesAvailable = games
+			database.getAllQuotes((ql, qm)=>{
+				quotesList = ql
+				quotesMap = qm
+				console.log("Loaded quotes from database successfully.")
+				File.readFile('./Quotes/quotesMOTD.json', 'utf8', (err, content)=>{
+					quotesMOTD = JSON.parse(content)
+					//console.log(quotesMOTD)
+					console.log("Read motd.")
+					console.log("Building fuzz...")
+					quotesFuzzySet = FuzzySet(quotesList.concat(specialSentences))
+					console.log("Gabi bot is ready!")
+					if(callback != null){
+						callback()
+					}
+				})
 			})
 		})
 	})
@@ -86,13 +90,15 @@ function addReply(message, reply){
 	})
 }
 
-/*
-function addReply(message, reply){
-	quotesList.push(message)
-	quotesMap[message] = reply
-	quotesFuzzySet.add(message)
+function getRandomGame(){
+	return u.randomOfArray(gamesAvailable).GAME_NAME
 }
-*/
+
+function addGame(gameName){
+	database.addGame(gameName, ()=>{
+		gamesAvailable.push(gameName)
+	})
+}
 
 function addMOTD(message){
 	quotesMOTD.push(message)
@@ -131,8 +137,10 @@ module.exports.save = save
 module.exports.sendJoke = sendJoke
 module.exports.getRandomMOTD = getRandomMOTD
 module.exports.addMOTD = addMOTD
+module.exports.addGame = addGame
 module.exports.defuzz = defuzz
 module.exports.getIntendedQuote = getIntendedQuote
+module.exports.getRandomGame = getRandomGame
 
 
 

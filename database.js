@@ -39,6 +39,20 @@ function getAllQuotes(callback){
 	});
 }
 
+function getAllGames(callback){
+	let query = `select * from GABI_GAMES`
+	let gamesList = []
+	con.query(query, function (err, result, fields) {
+		if (err) {
+			console.log(err)
+			process.exit()
+		} else {
+			gamesList = result
+			callback(gamesList)
+		}
+	});
+}
+
 function pushPair(key, value, callback){
 	let query = `insert into GABI_QUOTES values( '${key}' , '${value}' )`
 	con.query(query, function (err, result, fields) {
@@ -54,26 +68,25 @@ function pushPair(key, value, callback){
 	});
 }
 
+function pushGame(gameName, callback){
+	let query = `insert into GABI_GAMES values( '${gameName}' )`
+	con.query(query, function(err, result, fields){
+		if(err){
+			console.log(err)
+			process.exit()
+		} else {
+			console.log(`Pushed ${gameName}`)
+			if(callback != null){
+				callback()
+			}
+		}
+	})
+}
+
 
 module.exports.connectToDatabase = function(callback){connectThen(callback)}
 module.exports.getAllQuotes = getAllQuotes
+module.exports.getAllGames = getAllGames
 module.exports.addQuote = pushPair
+module.exports.addGame = pushGame
 
-
-/*
-const File = require('fs')
-connectThen(()=>{
-	File.readFile('./Quotes/quotesList.json', 'utf-8', (err, quotesList)=>{
-		quotesList = JSON.parse(quotesList)
-		File.readFile('./Quotes/quotesMap.json', 'utf-8', (err, quotesMap)=>{
-			quotesMap = JSON.parse(quotesMap)
-			console.log(quotesList)
-			console.log(quotesMap)
-			for(let key of quotesList){
-				pushPair(key, quotesMap[key])
-			}
-		})
-	})
-})
-
-*/
